@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test Backbone Page</title>
+  <script src="./jquery-1.12.4.min.js"></script>
+  <script src="./underscore.js"></script>
+  <script src="./backbone.js"></script>
+  
+</head>
+<body>
+  <h1>Test Backbone Page</h1>
+  <div>
+    <span>username:</span> <span id="username"></span>
+  </div>
+</body>
+<script>
+  var W;
+  $(function(){
+    // 测试提取DOM元素
+    var title = $('h1').html();
+
+    // 测试backbone的事件触发
+    var obj = {};
+    _.extend(obj, Backbone.Events);
+    obj.on('start', function(){
+      console.log('staring... %s', title);
+    });
+    obj.trigger('start', 'the first event');
+
+    // 测试原型链
+    var a = {a: 1};
+    var b = Object.create(a);
+    var c = Object.create(b);
+    W = {a:a, b:b, c:c};
+    console.log('test prototype link: %o, %o, %o', a, b, c);
+    console.log('test prototype link: ', W);
+
+
+    // 测试backbone模型
+    var User = Backbone.Model.extend({
+      initialize: function(){
+        console.log('this is initialize a new user');
+        this.set({username: 'Tom'});
+      },
+      render: function(){
+        $('#username').text(this.get('username'));
+      } 
+    });
+
+    var user = new User({ 'username': 'Tom', realname: 'Tom Logan' });
+    var username = user.get('username');
+    user.on('change:username', user.render);
+
+    _.delay(function(){
+      user.set({username: 'Bob'});
+    }, 3000);
+
+    console.log('prototype: %o, model: %o', User, user.get('username'));
+
+  });
+</script>
+</html>
